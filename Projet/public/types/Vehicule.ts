@@ -1,0 +1,22 @@
+export type Vehicle = {
+  id: number;
+  brand: string;
+  registration: string;
+  image: File | null;
+  type: string;
+  model: string;
+  fuelType: string;
+  mileage: number;
+  tankVolume: number;
+  consumptionPerKm: number;
+  comfortType: string;
+  experience: string;
+  cv: string;
+  registrationNumber: string;
+  baggageCapacity: string;
+  pickupLocations: string[];
+  size: string;
+  gearboxType: string;
+  manufacturer: string;
+  availableSeats:number;
+};
