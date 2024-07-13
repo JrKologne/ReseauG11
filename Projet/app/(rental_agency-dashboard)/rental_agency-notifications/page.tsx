@@ -304,19 +304,19 @@ const Page = () => {
         <Link href="/create-vehicle-request">
             <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center">
               <MagnifyingGlassIcon className="w-5 h-5 mr-2" />
-              Faire une annonce de recherche de véhicule
+              faire une annonce
             </button>
           </Link>
           <Link href="/create-announcement">
             <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center">
               <PencilIcon className="w-5 h-5 mr-2" />
-              Faire une annonce
+              voir les annonces des clients
             </button>
           </Link>
           <Link href="/vehicule-rentals">
             <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center">
               <Image src={iconCar} alt="logo" className="w-5 h-5 mr-2" />
-              Voir les annonces de location de véhicule
+              Voir les annonces des conducteurs
             </button>
           </Link>
           
@@ -348,7 +348,7 @@ const Page = () => {
         </ul>
       </div>
       <div className="bg-white shadow rounded-lg p-4 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Demandes des Passagers</h2>
+        <h2 className="text-xl font-semibold mb-4">Demandes des clients</h2>
         <ul className="divide-y divide-gray-200">
           {requests.map((request) => (
             <li key={request.id} className="py-4">

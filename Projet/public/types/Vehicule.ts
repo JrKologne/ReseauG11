@@ -14,9 +14,8 @@ export type Vehicle = {
   cv: string;
   registrationNumber: string;
   baggageCapacity: string;
-  pickupLocations: string[];
   size: string;
   gearboxType: string;
   manufacturer: string;
-  availableSeats:number;
+  availableSeats: number;
 };

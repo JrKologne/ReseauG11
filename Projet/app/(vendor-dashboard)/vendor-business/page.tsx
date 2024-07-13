@@ -129,7 +129,7 @@ const Page = () => {
               onChange={(e) => setNumberOfVehicles(parseInt(e.target.value))}
               className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
               min="0"
-              max="10"
+              max="1"
             />
           </div>
           <div className="flex items-center">

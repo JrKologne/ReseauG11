@@ -2,22 +2,17 @@
 import { useState, ChangeEvent, useEffect } from 'react';
 import Image from 'next/image';
 import Car from '@/public/img/th.png';
-import Money from '@/public/img/bullet.png';
 import { Vehicle } from '@/public/types/Vehicule';
 
 const Page = () => {
-  const [hasVehicles, setHasVehicles] = useState(false);
-  const [numberOfVehicles, setNumberOfVehicles] = useState(1);
   const [vehiclesData, setVehiclesData] = useState<Vehicle[]>([]);
-  const [pickupTimesLocations, setPickupTimesLocations] = useState<{ time: string, location: string }[]>([{ time: '', location: '' }]);
-  const [availableSeats, setAvailableSeats] = useState(0);
   const [tariff, setTariff] = useState('');
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    const newVehiclesData = Array.from({ length: numberOfVehicles }, (_, index) => ({
-      id: index + 1,
-      brand: `Brand ${String.fromCharCode(65 + index)}`,
+    const newVehiclesData: Vehicle[] = [{
+      id: 1,
+      brand: 'Brand A',
       registration: '',
       image: null,
       type: 'Car',
@@ -31,28 +26,27 @@ const Page = () => {
       cv: '',
       registrationNumber: '',
       baggageCapacity: '',
-      pickupLocations: [],
       size: '',
       gearboxType: 'Manuelle',
       manufacturer: '',
-      availableSeats:0,
-    }));
+      availableSeats: 0,
+    }];
     setVehiclesData(newVehiclesData);
-  }, [numberOfVehicles]);
+  }, []);
 
   const handleInputChange = (id: number, field: keyof Vehicle, value: any) => {
     const updatedVehicles = vehiclesData.map(vehicle =>
       vehicle.id === id ? { ...vehicle, [field]: value } : vehicle
     );
     setVehiclesData(updatedVehicles);
-    setIsEditing(true);;
-  };
-  const saveChanges = () => {
-    // Logique pour sauvegarder les données des véhicules
-    console.log('Véhicules sauvegardés :', vehiclesData);
-    setIsEditing(false);
+    setIsEditing(true);
   };
 
+  const saveChanges = () => {
+    // Logic to save the vehicle data
+    console.log('Vehicles saved:', vehiclesData);
+    setIsEditing(false);
+  };
 
   const handleImageUpload = (id: number, event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -77,44 +71,41 @@ const Page = () => {
     setIsEditing(false);
   };
 
-  const handlePickupChange = (index: number, field: 'time' | 'location', value: string) => {
-    const updatedPickupTimesLocations = [...pickupTimesLocations];
-    updatedPickupTimesLocations[index][field] = value;
-    setPickupTimesLocations(updatedPickupTimesLocations);
-  };
-
-  const addPickupTimeLocation = () => {
-    setPickupTimesLocations([...pickupTimesLocations, { time: '', location: '' }]);
+  const addVehicle = () => {
+    const newVehicleId = vehiclesData.length + 1;
+    const newVehicle: Vehicle = {
+      id: newVehicleId,
+      brand: `Brand ${String.fromCharCode(65 + newVehicleId)}`,
+      registration: '',
+      image: null,
+      type: 'Car',
+      model: '',
+      fuelType: 'Essence',
+      mileage: 0,
+      tankVolume: 0,
+      consumptionPerKm: 0,
+      comfortType: '',
+      experience: '',
+      cv: '',
+      registrationNumber: '',
+      baggageCapacity: '',
+      size: '',
+      gearboxType: 'Manuelle',
+      manufacturer: '',
+      availableSeats: 0,
+    };
+    setVehiclesData([...vehiclesData, newVehicle]);
   };
 
   return (
     <div className="px-3 lg:px-6 bg-[var(--bg-1)] pt-6">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center">
-          <input
-            type="checkbox"
-            id="hasVehicles"
-            checked={hasVehicles}
-            onChange={(e) => setHasVehicles(e.target.checked)}
-            className="mr-2 h-5 w-5 text-blue-600"
-          />
-          <label htmlFor="hasVehicles" className="text-lg font-semibold">
-            Enregistrement et gestion des véhicules
-          </label>
+          <h2 className="text-lg font-semibold">Enregistrement et gestion des véhicules</h2>
         </div>
         <div className="flex items-center">
-          <div className="flex items-center mr-4">
-            <Image src={Car} alt="logo" className="w-6 h-6 mr-1 text-gray-500" />
-            <input
-              type="number"
-              value={numberOfVehicles}
-              onChange={(e) => setNumberOfVehicles(parseInt(e.target.value))}
-              className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-              min="0"
-            />
-          </div>
           <div className="flex items-center">
-            <Image src={Money} alt="logo" className="w-6 h-6 mr-1 text-gray-500" />
+            <Image src={Car} alt="logo" className="w-6 h-6 mr-1 text-gray-500" />
             <input
               type="text"
               value={tariff}
@@ -124,141 +115,99 @@ const Page = () => {
             />
           </div>
           {isEditing && (
-            <button
-        onClick={saveChanges}
-        className="ml-4 bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        Sauvegarder les modifications
+            <button className="ml-4 bg-blue-500 text-white px-4 py-2 rounded" onClick={saveChanges}>
+              Sauvegarder les modifications
             </button>
-    )}
+          )}
         </div>
       </div>
 
-      {hasVehicles && (
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-2">Gestion des véhicules</h2>
-          <div className="p-4 rounded-lg bg-white">
-            {vehiclesData.map(vehicle => (
-              <div key={vehicle.id} className="border-b border-gray-200 pb-4 mb-4">
-                <div className="flex justify-between items-center">
-                  <div className="text-lg font-semibold">
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={vehicle.brand}
-                        onChange={(e) => handleInputChange(vehicle.id, 'brand', e.target.value)}
-                        className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500 w-full"
-                      />
-                    ) : (
-                      vehicle.brand
-                    )}
-                  </div>
-                  <div className="flex">
-                    {isEditing ? (
-                      <button className="mr-2 bg-blue-500 text-white px-4 py-1 rounded" onClick={handleSave}>
-                        Enregistrer
-                      </button>
-                    ) : (
-                      <button className="mr-2 bg-gray-300 text-gray-700 px-4 py-1 rounded" onClick={handleEdit}>
-                        Modifier
-                      </button>
-                    )}
-                    {isEditing && (
-                      <button className="bg-gray-300 text-gray-700 px-4 py-1 rounded" onClick={handleCancel}>
-                        Annuler
-                      </button>
-                    )}
-                  </div>
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold mb-2">Gestion des véhicules</h2>
+        <div className="p-4 rounded-lg bg-white">
+          {vehiclesData.map(vehicle => (
+            <div key={vehicle.id} className="border-b border-gray-200 pb-4 mb-4">
+              <div className="flex justify-between items-center">
+                <div className="text-lg font-semibold">
+                  {vehicle.brand} - {vehicle.type}
                 </div>
-                <div className="grid grid-cols-2 gap-4 mt-4">
-                  {[
-                    { label: 'Numéro d\'immatriculation', field: 'registrationNumber' },
-                    { label: 'Capacité de bagage', field: 'baggageCapacity' },
-                    { label: 'Gabarit', field: 'size' },
-                    { label: 'Type de boite de vitesse', field: 'gearboxType' },
-                    { label: 'Immatriculation', field: 'registration' },
-                    { label: 'Fabricant', field: 'manufacturer' },
-                    { label: 'Marque', field: 'brand' },
-                    { label: 'Type de véhicule', field: 'type' },
-                    { label: 'Modèle', field: 'model' },
-                    { label: 'Type de carburant', field: 'fuelType' },
-                    { label: 'Kilométrage à la mise en service', field: 'mileage' },
-                    { label: 'Volume du réservoir', field: 'tankVolume' },
-                    { label: 'Consommation au kilomètre', field: 'consumptionPerKm' },
-                    { label: 'Type de confort', field: 'comfortType' },
-                    { label: 'Nombre de places disponibles', field: 'availableSeats' },
-                  ].map(({ label, field }) => (
-                    <div key={field} className="flex flex-col">
-                      <label className="text-lg font-semibold">{label}:</label>
-                      {isEditing ? (
-                        <input
-                          type="text"
-                          value={(vehicle as any)[field]}
-                          onChange={(e) => handleInputChange(vehicle.id, field as keyof Vehicle, e.target.value)}
-                          className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500 w-full"
-                        />
-                      ) : (
-                        <span className="ml-2">{(vehicle as any)[field]}</span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-4">
-                  <label className="text-lg font-semibold">Image du véhicule:</label>
-                  <input
-                    type="file"
-                    onChange={(e) => handleImageUpload(vehicle.id, e)}
-                    className="ml-2"
-                  />
-                  {vehicle.image && (
-                    <div className="mt-2">
-                      <Image
-                        src={URL.createObjectURL(vehicle.image)}
-                        alt={`Image du véhicule ${vehicle.brand}`}
-                        width={100}
-                        height={100}
-                      />
+              </div>
+              <div className="flex items-center mt-2">
+                <div className="w-20 h-20 relative">
+                  {vehicle.image ? (
+                    <img src={URL.createObjectURL(vehicle.image)} alt="vehicle" className="w-full h-full object-cover rounded-md" />
+                  ) : (
+                    <div className="w-full h-full bg-gray-200 flex items-center justify-center rounded-md">
+                      <Image src={Car} alt="car" className="w-12 h-12" />
                     </div>
                   )}
+                  <div className="absolute top-0 right-0 p-1 bg-white rounded-full">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(vehicle.id, e)}
+                      className="hidden"
+                    />
+                    <button className="w-6 h-6 flex items-center justify-center" title="Modifier l'image">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="feather feather-edit"
+                      >
+                        <path d="M17 3h4v4L7.5 21l-4-4L17 3zM3 17l11-11M23 3h-6M23 3v6M3 21L21 3" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <div className="text-gray-500">Modèle:</div>
+                  <div>{vehicle.model}</div>
+                </div>
+                <div className="ml-4">
+                  <div className="text-gray-500">Carburant:</div>
+                  <div>{vehicle.fuelType}</div>
+                </div>
+                <div className="ml-4">
+                  <div className="text-gray-500">Kilométrage:</div>
+                  <div>{vehicle.mileage}</div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-2">Spécification de l&apos;heure et du lieu de ramassage</h2>
-        <div className="p-4 rounded-lg bg-white">
-          {pickupTimesLocations.map((pickup, index) => (
-            <div key={index} className="flex justify-between items-center mt-4">
-              <div>
-                <label htmlFor={`pickupTime-${index}`} className="text-lg font-semibold">Heure de ramassage:</label>
-                <input
-                  type="text"
-                  id={`pickupTime-${index}`}
-                  value={pickup.time}
-                  onChange={(e) => handlePickupChange(index, 'time', e.target.value)}
-                  className="ml-2 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label htmlFor={`pickupLocation-${index}`} className="text-lg font-semibold">Lieu de ramassage:</label>
-                <input
-                  type="text"
-                  id={`pickupLocation-${index}`}
-                  value={pickup.location}
-                  onChange={(e) => handlePickupChange(index, 'location', e.target.value)}
-                  className="ml-2 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-                />
+              <div className="mt-4">
+                <div className="text-gray-500">Sièges disponibles:</div>
+                <div className="flex items-center mt-2">
+                  <button
+                    className="text-blue-500"
+                    onClick={() => {
+                      const newAvailableSeats = vehicle.availableSeats - 1;
+                      const rest = newAvailableSeats >= 0 ? newAvailableSeats : 0;
+                      handleInputChange(vehicle.id, 'availableSeats', rest);
+                    }}
+                  >
+                    - Supprimer une place
+                  </button>
+                  <span className="mx-2">{vehicle.availableSeats}</span>
+                  <button
+                    className="text-blue-500"
+                    onClick={() => handleInputChange(vehicle.id, 'availableSeats', vehicle.availableSeats + 1)}
+                  >
+                    + Ajouter une place
+                  </button>
+                </div>
               </div>
             </div>
           ))}
-          <button onClick={addPickupTimeLocation} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Ajouter une heure et un lieu</button>
+          <div className="flex justify-center">
+            <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={addVehicle}>
+              Ajouter un véhicule
+            </button>
+          </div>
         </div>
       </div>
-
-     
     </div>
   );
 };
