@@ -5,6 +5,13 @@ import Car from '@/public/img/th.png';
 import Money from '@/public/img/bullet.png';
 import { Vehicle } from '@/public/types/Vehicule';
 
+const brands = ["Brand A", "Brand B", "Brand C", "Brand D"];
+const fuelTypes = ["Essence", "Diesel", "Électrique"];
+const vehicleTypes = ["Car", "Truck", "SUV"];
+const comfortTypes = ["Climatisé", "Siège en cuir", "VIP"];
+const gearboxTypes = ["Manuelle", "Automatique", "4x4"];
+
+
 const Page = () => {
   const [hasVehicles, setHasVehicles] = useState(false);
   const [numberOfVehicles, setNumberOfVehicles] = useState(1);
@@ -13,6 +20,7 @@ const Page = () => {
   const [availableSeats, setAvailableSeats] = useState(0);
   const [tariff, setTariff] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+
 
   useEffect(() => {
     const newVehiclesData = Array.from({ length: numberOfVehicles }, (_, index) => ({
@@ -45,24 +53,36 @@ const Page = () => {
       vehicle.id === id ? { ...vehicle, [field]: value } : vehicle
     );
     setVehiclesData(updatedVehicles);
-    setIsEditing(true);;
-  };
-  const saveChanges = () => {
-    // Logique pour sauvegarder les données des véhicules
-    console.log('Véhicules sauvegardés :', vehiclesData);
-    setIsEditing(false);
+    setIsEditing(true);
   };
 
+  const handleCheckboxChange = (id: number, field: keyof Vehicle, value: string, checked: boolean) => {
+    const updatedVehicles = vehiclesData.map(vehicle => {
+      if (vehicle.id === id) {
+        const updatedField = checked
+          ? [...(vehicle[field] as string[]), value]
+          : (vehicle[field] as string[]).filter(item => item !== value);
+        return { ...vehicle, [field]: updatedField };
+      }
+      return vehicle;
+    });
+    setVehiclesData(updatedVehicles);
+  };
 
   const handleImageUpload = (id: number, event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
+    const files = event.target.files;
+    if (files) {
       const updatedVehicles = vehiclesData.map(vehicle =>
-        vehicle.id === id ? { ...vehicle, image: file } : vehicle
+        vehicle.id === id ? { ...vehicle, images: Array.from(files) } : vehicle
       );
       setVehiclesData(updatedVehicles);
       setIsEditing(true);
     }
+  };
+
+  const saveChanges = () => {
+    console.log('Véhicules sauvegardés :', vehiclesData);
+    setIsEditing(false);
   };
 
   const handleSave = () => {
@@ -191,17 +211,75 @@ const Page = () => {
                     <div key={field} className="flex flex-col">
                       <label className="text-lg font-semibold">{label}:</label>
                       {isEditing ? (
-                        <input
-                          type="text"
-                          value={(vehicle as any)[field]}
-                          onChange={(e) => handleInputChange(vehicle.id, field as keyof Vehicle, e.target.value)}
-                          className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500 w-full"
-                        />
+                        <>
+                          {field === "brand" ? (
+                            <select
+                              value={(vehicle as any)[field]}
+                              onChange={(e) => handleInputChange(vehicle.id, field as keyof Vehicle, e.target.value)}
+                              className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500 w-full"
+                            >
+                              {brands.map(brand => (
+                                <option key={brand} value={brand}>{brand}</option>
+                              ))}
+                            </select>
+                          ) : field === "fuelType" ? (
+                            <select
+                              value={(vehicle as any)[field]}
+                              onChange={(e) => handleInputChange(vehicle.id, field as keyof Vehicle, e.target.value)}
+                              className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500 w-full"
+                            >
+                              {fuelTypes.map(fuelType => (
+                                <option key={fuelType} value={fuelType}>{fuelType}</option>
+                              ))}
+                            </select>
+                          ) : field === "type" ? (
+                            <select
+                              value={(vehicle as any)[field]}
+                              onChange={(e) => handleInputChange(vehicle.id, field as keyof Vehicle, e.target.value)}
+                              className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500 w-full"
+                            >
+                              {vehicleTypes.map(type => (
+                                <option key={type} value={type}>{type}</option>
+                              ))}
+                            </select>
+                          ) : field === "comfortType" ? (
+                            comfortTypes.map(comfortType => (
+                              <label key={comfortType} className="inline-flex items-center mt-2">
+                                <input
+                                  type="checkbox"
+                                  checked={(vehicle.comfortType as string[]).includes(comfortType)}
+                                  onChange={(e) => handleCheckboxChange(vehicle.id, field, comfortType, e.target.checked)}
+                                  className="form-checkbox h-4 w-4"
+                                />
+                                <span className="ml-2">{comfortType}</span>
+                              </label>
+                            ))
+                          ) : field === "gearboxType" ? (
+                            gearboxTypes.map(gearboxType => (
+                              <label key={gearboxType} className="inline-flex items-center mt-2">
+                                <input
+                                  type="checkbox"
+                                  checked={(vehicle.gearboxType as string[]).includes(gearboxType)}
+                                  onChange={(e) => handleCheckboxChange(vehicle.id, field, gearboxType, e.target.checked)}
+                                  className="form-checkbox h-4 w-4"
+                                />
+                                <span className="ml-2">{gearboxType}</span>
+                              </label>
+                            ))
+                          ) : (
+                            <input
+                              type="text"
+                              value={(vehicle as any)[field]}
+                              onChange={(e) => handleInputChange(vehicle.id, field as keyof Vehicle, e.target.value)}
+                              className="px-2 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500 w-full"
+                            />
+                          )}
+                        </>
                       ) : (
                         <span className="ml-2">{(vehicle as any)[field]}</span>
                       )}
                     </div>
-                  ))}
+                  ))}//
                 </div>
                 <div className="mt-4">
                   <label className="text-lg font-semibold">Image du véhicule:</label>
@@ -227,36 +305,7 @@ const Page = () => {
         </div>
       )}
 
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-2">Spécification de l&apos;heure et du lieu de ramassage</h2>
-        <div className="p-4 rounded-lg bg-white">
-          {pickupTimesLocations.map((pickup, index) => (
-            <div key={index} className="flex justify-between items-center mt-4">
-              <div>
-                <label htmlFor={`pickupTime-${index}`} className="text-lg font-semibold">Heure de ramassage:</label>
-                <input
-                  type="text"
-                  id={`pickupTime-${index}`}
-                  value={pickup.time}
-                  onChange={(e) => handlePickupChange(index, 'time', e.target.value)}
-                  className="ml-2 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label htmlFor={`pickupLocation-${index}`} className="text-lg font-semibold">Lieu de ramassage:</label>
-                <input
-                  type="text"
-                  id={`pickupLocation-${index}`}
-                  value={pickup.location}
-                  onChange={(e) => handlePickupChange(index, 'location', e.target.value)}
-                  className="ml-2 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-                />
-              </div>
-            </div>
-          ))}
-          <button onClick={addPickupTimeLocation} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Ajouter une heure et un lieu</button>
-        </div>
-      </div>
+      
 
      
     </div>

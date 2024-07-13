@@ -278,7 +278,7 @@ const Page = () => {
                         <span className="ml-2">{(vehicle as any)[field]}</span>
                       )}
                     </div>
-                  ))}
+                  ))}//
                 </div>
                 <div className="mt-4">
                   <label className="text-lg font-semibold">Images du véhicule:</label>
